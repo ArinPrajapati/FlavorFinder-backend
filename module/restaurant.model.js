@@ -2,11 +2,6 @@ const mongoose = require("mongoose");
 
 const restaurantSchema = mongoose.Schema(
   {
-    restaurant_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "user",
-    },
     restaurant_name: {
       type: String,
       required: [true, "Please add the restaurant Name"],
@@ -55,3 +50,5 @@ const restaurantSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+module.exports = mongoose.model("Restaurant", restaurantSchema);

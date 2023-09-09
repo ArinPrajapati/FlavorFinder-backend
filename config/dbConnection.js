@@ -8,10 +8,10 @@ const connectDB = async () => {
       connnect.connection.host,
       connnect.connection.name
     );
-  } catch (err) {
+  } catch (err) { sd
     console.log(err);
     process.exit(1);
   }
 };
-
+ 
 module.exports = connectDB;

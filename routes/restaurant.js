@@ -1,27 +1,11 @@
 const express = require("express");
+const {
+    getAllRestaurants,
+    createRestaurant,
+} = require("../controller/restaurant.controller");
 const router = express.Router();
 
-router.route("/").get(async (req, res) => {
-  try {
-    const data = { message: "Hello, this is the restaurant API!" };
-    console.log("here");
-    res.json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-router.route("/").post(async (req, res) => {
-  try {
-    const data = res.body;
-    console.log(`the request body is : `, req.body);
-    res.json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+router.route("/").get(getAllRestaurants).post(createRestaurant);
 
 router.route("/:id").delete(async (req, res) => {
   try {
