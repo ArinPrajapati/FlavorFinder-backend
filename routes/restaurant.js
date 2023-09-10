@@ -1,43 +1,17 @@
 const express = require("express");
 const {
-    getAllRestaurants,
-    createRestaurant,
+  getAllRestaurants,
+  createRestaurant,
+  loginRestaurant,
+  currentRestaurant,
 } = require("../controller/restaurant.controller");
 const router = express.Router();
+const validateToken = require("../middleware/validatedTokenHandler");
 
 router.route("/").get(getAllRestaurants).post(createRestaurant);
 
-router.route("/:id").delete(async (req, res) => {
-  try {
-    const data = req.params.id;
-    console.log(`the request body is : `, data);
-    res.json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+router.route("/login").post(loginRestaurant);
 
-router.route("/:id").get(async (req, res) => {
-  try {
-    const data = req.params.id;
-    console.log(`the request body is : `, data);
-    res.json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-router.route("/:id").put(async (req, res) => {
-  try {
-    const data = req.params.id;
-    console.log(`the request body is : `, data);
-    res.json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+router.get("/current", validateToken, currentRestaurant);
 
 module.exports = router;

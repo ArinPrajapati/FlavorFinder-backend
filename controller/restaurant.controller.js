@@ -2,6 +2,7 @@
 const asyncHandler = require("express-async-handler");
 const Restaurant = require("../module/restaurant.model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 //@desc get all restaurants
 //@route get /api/restaurant
@@ -17,9 +18,8 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 //@access (restaurant owner only) private
 
 const createRestaurant = asyncHandler(async (req, res) => {
-  const Data = req.body; // Changed from res.body to req.body
+  const Data = req.body;
 
-  // Check if any of the required fields is missing
   if (
     !Data.restaurant_name ||
     !Data.restaurant_location ||
@@ -27,8 +27,8 @@ const createRestaurant = asyncHandler(async (req, res) => {
     !Data.restaurant_owner_name ||
     !Data.restaurant_email
   ) {
-    res.status(400);
-    console.error("All fields are mandatory");
+    res.status(400).json({ message: "All fields are mandatory" });
+    return; // Return early if fields are missing
   }
 
   const hashedPassword = await bcrypt.hash(Data.password, 10);
@@ -50,12 +50,54 @@ const createRestaurant = asyncHandler(async (req, res) => {
   if (restaurant) {
     res.status(201).json(restaurant);
   } else {
-    res.status(400);
-    console.error("User data is not valid");
+    res.status(400).json({ message: "User data is not valid" });
   }
+});
+
+//@desc login a restaurant
+//@route post /api/restaurant/login
+//@access  public
+
+const loginRestaurant = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400).json({ message: "All fields are mandatory" });
+    return;
+  }
+  const restaurant = await Restaurant.findOne({ restaurant_email: email });
+  if (restaurant && (await bcrypt.compare(password, restaurant.password))) {
+    const accessToken = jwt.sign(
+      {
+        restaurant: {
+          restaurant_name: restaurant.restaurant_name,
+          restaurant_type: restaurant.restaurant_type,
+          restaurant_email: restaurant.restaurant_email,
+          restaurant_desc: restaurant.restaurant_desc,
+          restaurant_op_time: restaurant.restaurant_op_time,
+          restaurant_cl_time: restaurant.restaurant_cl_time,
+          restaurant_logo: restaurant.restaurant_logo,
+          restaurant_location: restaurant.restaurant_location,
+          restaurant_id: restaurant.restaurant_id,
+          restaurant_owner_name: restaurant.restaurant_owner_name,
+        },
+      },
+      process.env.ACCESS_TOKEN_SECERT,
+      { expiresIn: "20m" }
+    );
+
+    res.status(200).json({ accessToken });
+  } else {
+    res.status(400).json({ message: "Error in input or not found" });
+  }
+});
+
+const currentRestaurant = asyncHandler(async (req, res) => {
+  res.status(200).json(res.restaurant_id);
 });
 
 module.exports = {
   createRestaurant,
   getAllRestaurants,
+  loginRestaurant,
+  currentRestaurant,
 };
