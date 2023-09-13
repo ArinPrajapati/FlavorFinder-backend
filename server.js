@@ -3,9 +3,9 @@ const dotenv = require("dotenv").config();
 const connectDB = require("./config/dbConnection");
 const errorHandler = require("./middleware/errorHandler");
 const app = express();
-connectDB();
-const port = process.env.PORT || 3400;
 
+const port = process.env.PORT || 3400;
+connectDB();
 app.use(express.json());
 console.log("hlel");
 

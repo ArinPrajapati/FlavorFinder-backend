@@ -1,9 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const Menu = require("../controller/menu.restaurant.control");
+const Menu = require("../module/menu.model");
 
 //@desc get all items in menu
 //@route get /api/menu
-//@access public (only for vister)
+//@access public (only for visitors)
 
 const getAllItems = asyncHandler(async (req, res) => {
   const menu = await Menu.find();
@@ -14,24 +14,26 @@ const getAllItems = asyncHandler(async (req, res) => {
 //@route post /api/menu
 //@access private(only restaurant owner)
 const createMenuItem = asyncHandler(async (req, res) => {
-  console.log(`the request body is : `, req.body);
-  const { item } = req.body;
+  const item = req.body;
 
   if (!item.name || !item.price) {
     res.status(400);
-    throw new Error("All fields are mandotary !");
-  }
+    throw new Error("All fields are mandatory!");
+  } else {
+    // Associate the menu item with the restaurant using req.restaurant.id
+    const menu = await Menu.create({
+      restaurant: req.restaurant.id, // Link the menu item to the restaurant
+      name: item.name,
+      veg: item.veg,
+      non_veg: item.non_veg,
+      description: item.description,
+      price: item.price,
+    });
 
-  const menu = await Menu.create({
-    restaurant: req.restaurant.id,
-    name,
-    veg,
-    non_veg,
-    description,
-    price,
-  });
-  console.log("til create contact");
-  res.status(201).json(contact);
+    console.log("Menu item created");
+    res.status(201).json(menu);
+    console.log(`the request body is : `, req.body);
+  }
 });
 
 module.exports = {

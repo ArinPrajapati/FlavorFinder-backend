@@ -4,8 +4,8 @@ const menuSchema = new mongoose.Schema(
   {
     restaurant: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: Restaurant,
       required: true,
+      ref: "restaurant",
     },
     name: {
       type: String,

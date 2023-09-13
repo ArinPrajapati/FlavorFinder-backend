@@ -92,7 +92,32 @@ const loginRestaurant = asyncHandler(async (req, res) => {
 });
 
 const currentRestaurant = asyncHandler(async (req, res) => {
-  res.status(200).json(res.restaurant_id);
+  const accessToken = req.header("Authorization").split(" ")[1];
+
+  if (!accessToken) {
+    res.status(401).json({ message: "Access token not found" });
+    return;
+  }
+
+  try {
+    const decodedToken = jwt.verify(
+      accessToken,
+      process.env.ACCESS_TOKEN_SECERT
+    );
+
+    if (!decodedToken.restaurant) {
+      res.status(401).json({ message: "Invalid access token" });
+      return;
+    }
+
+    // You can access all restaurant data from decodedToken.restaurant
+    const restaurantData = decodedToken.restaurant;
+
+    // Here, you can return all restaurant data as JSON
+    res.status(200).json(restaurantData);
+  } catch (error) {
+    res.status(401).json({ message: "Invalid access token" });
+  }
 });
 
 module.exports = {

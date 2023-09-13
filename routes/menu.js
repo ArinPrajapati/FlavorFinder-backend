@@ -9,7 +9,7 @@ const {
 const validateToken = require("../middleware/validatedTokenHandler");
 
 router.use(validateToken);
-router.route("/").get(getAllItems).post(createMenuItem);
-
+console.log("till");
+router.route("/").get(getAllItems).post(validateToken, createMenuItem);
 
 module.exports = router;
