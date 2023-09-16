@@ -1,6 +1,6 @@
 //@IMPORTS
 const asyncHandler = require("express-async-handler");
-const Restaurant = require("../module/restaurant.model");
+const Restaurant = require("../middleware/module/restaurant.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -64,6 +64,9 @@ const loginRestaurant = asyncHandler(async (req, res) => {
     res.status(400).json({ message: "All fields are mandatory" });
     return;
   }
+  if (!process.env.ACCESS_TOKEN_SECRET) {
+    res.status(400).json({ message: "worng access token" });
+  }
   const restaurant = await Restaurant.findOne({ restaurant_email: email });
   if (restaurant && (await bcrypt.compare(password, restaurant.password))) {
     const accessToken = jwt.sign(
@@ -79,9 +82,11 @@ const loginRestaurant = asyncHandler(async (req, res) => {
           restaurant_location: restaurant.restaurant_location,
           restaurant_id: restaurant.restaurant_id,
           restaurant_owner_name: restaurant.restaurant_owner_name,
+          restaurant_code: restaurant.restaurant_code,
         },
       },
-      process.env.ACCESS_TOKEN_SECERT,
+
+      process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "20m" }
     );
 
@@ -100,23 +105,23 @@ const currentRestaurant = asyncHandler(async (req, res) => {
   }
 
   try {
-    const decodedToken = jwt.verify(
-      accessToken,
-      process.env.ACCESS_TOKEN_SECERT
-    );
+    const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
 
-    if (!decodedToken.restaurant) {
-      res.status(401).json({ message: "Invalid access token" });
+    if (!decoded.restaurant) {
+      res.status(401).json({ message: "Invalid access token 1" });
       return;
     }
 
     // You can access all restaurant data from decodedToken.restaurant
-    const restaurantData = decodedToken.restaurant;
+    const restaurantData = decoded.restaurant;
 
     // Here, you can return all restaurant data as JSON
     res.status(200).json(restaurantData);
+    if (!!restaurantData) {
+      res.status(401).json({ message: "Invalid access tokenn 3" });
+    }
   } catch (error) {
-    res.status(401).json({ message: "Invalid access token" });
+    res.status(401).json({ message: error });
   }
 });
 

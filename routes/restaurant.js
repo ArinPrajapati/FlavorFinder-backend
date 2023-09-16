@@ -1,11 +1,11 @@
 const express = require("express");
+const router = express.Router();
 const {
   getAllRestaurants,
   createRestaurant,
   loginRestaurant,
   currentRestaurant,
 } = require("../controller/restaurant.controller");
-const router = express.Router();
 const validateToken = require("../middleware/validatedTokenHandler");
 
 router.route("/").get(getAllRestaurants).post(createRestaurant);
