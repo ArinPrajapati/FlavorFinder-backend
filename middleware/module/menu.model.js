@@ -18,6 +18,10 @@ const menuSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    cataegory: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
     },

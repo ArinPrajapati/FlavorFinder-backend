@@ -39,7 +39,7 @@ const errorHandler = (err, req, res, next) => {
       });
       break;
     default:
-      console.log("No Error , On The Server Side!");
+      console.log(err,"No Error , On The Server Side!");
       break;
   }
 };

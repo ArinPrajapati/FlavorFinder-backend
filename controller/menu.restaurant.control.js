@@ -38,7 +38,7 @@ const createMenuItem = asyncHandler(async (req, res) => {
     console.log(req.restaurant);
     console.log(Object.keys(req.restaurant));
     const menu = await Menu.create({
-      restaurant: req.restaurant.restaurant.restaurant_code, // Include the restaurant ID
+      restaurant: req.restaurant.restaurant.id, // Include the restaurant ID
       name: item.name,
       veg: item.veg,
       non_veg: item.non_veg,
@@ -84,9 +84,13 @@ const getItems = asyncHandler(async (req, res) => {
   res.status(200).json(menu);
 });
 
+//@desc get all items belong to restaurant use restaurant code
+//@route post /api/menu/:id
+//@access private (only user who)
+
 module.exports = {
   createMenuItem,
   getAllItems,
   getRestaurantMenu,
-  getItems
+  getItems,
 };

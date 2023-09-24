@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const Restaurant = require("../middleware/module/restaurant.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
 
 //@desc get all restaurants
 //@route get /api/restaurant
@@ -44,6 +45,7 @@ const createRestaurant = asyncHandler(async (req, res) => {
     restaurant_location: Data.restaurant_location,
     password: hashedPassword,
     restaurant_owner_name: Data.restaurant_owner_name,
+    restaurant_code: uuidv4(),
   });
 
   console.log(`Created restaurant: ${restaurant}`);
